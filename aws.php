@@ -37,10 +37,8 @@ class aws_class {
 		        'Metadata' => $metadata
 		    ]);
 		} catch (Exception $e) {
-		    return $e->getMessage();
+		    error_log($e->getMessage());
 		}
-		
-		return 'Success';
 	}
 	
 	public function download($bucket, $key, $filename) {
@@ -60,10 +58,8 @@ class aws_class {
 				'Key' => $filename
 			]);			
 		} catch(Exception $e) {
-		    return $e->getMessage();
+		    error_log($e->getMessage());
 		}
-		
-		return 'Success';
 	}
 	
 }
