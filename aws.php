@@ -1,12 +1,12 @@
 <?php
-require(dirname(__FILE__).'/aws/aws-autoloader.php');
+require(dirname(__FILE__).'/AWS/aws-autoloader.php');
 
 use Aws\S3\S3Client;
 
 class aws_class {
 	private $client;
 	private $s3;
-	
+
 	public function __construct($key, $secret, $region) {
 		$credentials = array(
         					'key'      => $key,
@@ -22,12 +22,12 @@ class aws_class {
 		    			),
 		    'debug' => false
 		]);
-		
+
 	}
-	
+
 	public function upload($bucket, $local_file, $newfile, $metadata=array()) {
 		set_time_limit(0);
-		
+
 		try {
 		    $this->s3->putObject([
 		        'Bucket' => $bucket,
@@ -40,28 +40,28 @@ class aws_class {
 		    error_log($e->getMessage());
 		}
 	}
-	
+
 	public function download($bucket, $key, $filename) {
-		$result = $this->s3->getObject(array( 
-												'Bucket' => $bucket, 
-												'Key' => $key, 
-												'ResponseContentDisposition' => 'attachment; filename="'.$filename.'"' 
+		$result = $this->s3->getObject(array(
+												'Bucket' => $bucket,
+												'Key' => $key,
+												'ResponseContentDisposition' => 'attachment; filename="'.$filename.'"'
 											)
 									);
-		return $result['Body'];		
+		return $result['Body'];
 	}
-	
+
 	public function remove($bucket, $filename) {
 		try {
 			$this->s3->deleteObject([
 				'Bucket' => $bucket,
 				'Key' => $filename
-			]);			
+			]);
 		} catch(Exception $e) {
 		    error_log($e->getMessage());
 		}
 	}
-	
+
 }
 
 

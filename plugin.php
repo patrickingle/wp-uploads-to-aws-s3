@@ -8,7 +8,7 @@
 * Version: 1.0.0
 * License: GPLv2
 */
-$aws = include dirname(__FILE__).'/aws/config.php';
+$aws = include dirname(__FILE__).'/AWS/config.php';
 $s3 = $aws['s3'];
 require dirname(__FILE__) . '/aws.php';
 
@@ -18,19 +18,19 @@ $AWS = new aws_class($s3['key'], $s3['secret'], $s3['region']);
 
 function wpuaws3_custom_upload_filter( $file ) {
 	global $s3, $AWS;
-	
+
 	// Replace all spaces in the filename with a hyphen, as the filter for
 	// wp_delete_file file argument is passing in a filename with hyphens substitution for spaces,
 	// and thus prevents deleting from the AWS S3 bucket because the name is different.
 	$file['name'] = str_ireplace(' ','-',$file['name']);
-	
+
 	$upload_dir = wp_upload_dir();
 	$url = parse_url($upload_dir['url']);
 	$path = ltrim($url['path'],'/');
-	
+
 	$aws_upload_filepath = $path.'/'.$file['name'];
 
-	$AWS->upload($s3['bucket'],$file['tmp_name'],$aws_upload_filepath);		
+	$AWS->upload($s3['bucket'],$file['tmp_name'],$aws_upload_filepath);
 
     return $file;
 }
@@ -39,7 +39,7 @@ add_filter('wp_handle_upload_prefilter', 'wpuaws3_custom_upload_filter' );
 
 function wpuaws3_custom_delete_file( $file ) {
 	global $s3, $AWS;
-	
+
 	// Get the upload directory
 	$upload_dir = wp_upload_dir();
 	// No extract the upload baseurl, without the host
@@ -54,9 +54,9 @@ function wpuaws3_custom_delete_file( $file ) {
 	$length = $pos + 1;
 	// Extract the basepath file name from the $file parameter and conver backslashes to slashes
 	$aws_upload_filepath = str_ireplace('\\','/',substr($file,$length));
-	
+
 	$AWS->remove($s3['bucket'], $aws_upload_filepath);
-	
+
 	return $file;
 }
 
